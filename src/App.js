@@ -3,11 +3,14 @@ import avatar from './images/bozai.png'
 import { useState } from 'react'
 import _ from 'lodash'
 import classNames from 'classnames'
+import { useRef } from 'react'
+import {v4 as uuidv4} from 'uuid'
+import dayjs from 'dayjs'
 
 const defaultList = [
   {
-    // 评论id
-    rpid: 3,
+    // review id
+    rpid: uuidv4(),
     // user information
     user: {
       uid: '13258165',
@@ -81,6 +84,28 @@ const App = () => {
       setCommentList(_.orderBy(commentList, ['ctime'], ['desc']))
     }
   }
+
+  // get dom
+
+  const [content, setContent] = useState('')
+  const handlePublish = () => {
+    setCommentList(
+      [
+        ...commentList,
+        {
+          rpid: uuidv4(),
+          user: {
+            uid: '30009257',
+            avatar,
+            uname: 'Eric',
+          },
+          content: content,
+          ctime: dayjs(new Date()).format('MM-DDT HH:mm'),
+          like: 66,
+        }
+      ]
+    )
+  }
   return (
     <div className="app">
       {/*  Tab */}
@@ -113,10 +138,12 @@ const App = () => {
             <textarea
               className="reply-box-textarea"
               placeholder="Write a comment..."
+              value = {content}
+              onChange = {(e) => setContent(e.target.value)}
             />
             {/* submit button */}
             <div className="reply-box-send">
-              <div className="send-text">submit</div>
+              <div onClick = {handlePublish}className="send-text">submit</div>
             </div>
           </div>
         </div>
