@@ -65,8 +65,8 @@ const tabs = [
   { type: 'time', text: 'time' },
 ]
 
-const App = () => {
-  // get the port
+// your own hook
+function useGetList() {
   const [commentList, setCommentList] = useState([])
   //const [commentList, setCommentList] = useState(_.orderBy(defaultList, 'like', 'desc'))
 
@@ -79,6 +79,18 @@ const App = () => {
     }
     getList()
   }, [])
+
+  return {
+    commentList,
+    setCommentList
+  }
+}
+
+const App = () => {
+  // get the port
+
+  const {commentList, setCommentList} = useGetList()
+
   // delete review
   const handleDel = (id) => {
     console.log(id)
