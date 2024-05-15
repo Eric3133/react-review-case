@@ -1,51 +1,52 @@
 import './App.scss'
 import avatar from './images/bozai.png'
-import { useState } from 'react'
-import _ from 'lodash'
+import { useEffect, useState } from 'react'
+import _, { get } from 'lodash'
 import classNames from 'classnames'
 import { useRef } from 'react'
 import {v4 as uuidv4} from 'uuid'
 import dayjs from 'dayjs'
+import axios from 'axios'
 
-const defaultList = [
-  {
-    // review id
-    rpid: uuidv4(),
-    // user information
-    user: {
-      uid: '13258165',
-      avatar,
-      uname: 'Jay Chou',
-    },
-    // review content
-    content: 'This is so good',
-    // review time
-    ctime: '10-18 08:15',
-    like: 88,
-  },
-  {
-    rpid: 2,
-    user: {
-      uid: '36080105',
-      avatar,
-      uname: 'songXu',
-    },
-    content: 'Every day is a good day',
-    ctime: '11-13 11:29',
-    like: 88,
-  },
-  {
-    rpid: 1,
-    user: {
-      uid: '30009257',
-      avatar,
-      uname: 'Eric',
-    },
-    content: 'Learning React is so interesting',
-    ctime: '10-19 09:00',
-    like: 66,
-  },
-]
+// const defaultList = [
+//   {
+//     // review id
+//     rpid: uuidv4(),
+//     // user information
+//     user: {
+//       uid: '13258165',
+//       avatar,
+//       uname: 'Jay Chou',
+//     },
+//     // review content
+//     content: 'This is so good',
+//     // review time
+//     ctime: '10-18 08:15',
+//     like: 88,
+//   },
+//   {
+//     rpid: 2,
+//     user: {
+//       uid: '36080105',
+//       avatar,
+//       uname: 'songXu',
+//     },
+//     content: 'Every day is a good day',
+//     ctime: '11-13 11:29',
+//     like: 88,
+//   },
+//   {
+//     rpid: 1,
+//     user: {
+//       uid: '30009257',
+//       avatar,
+//       uname: 'Eric',
+//     },
+//     content: 'Learning React is so interesting',
+//     ctime: '10-19 09:00',
+//     like: 66,
+//   },
+// ]
 // current user
 const user = {
   // use id
@@ -65,7 +66,19 @@ const tabs = [
 ]
 
 const App = () => {
-  const [commentList, setCommentList] = useState(_.orderBy(defaultList, 'like', 'desc'))
+  // get the port
+  const [commentList, setCommentList] = useState([])
+  //const [commentList, setCommentList] = useState(_.orderBy(defaultList, 'like', 'desc'))
+
+  useEffect(() => {
+    async function getList(){
+      // axios
+      const res = await axios.get('http://localhost:3004/list')
+      console.log(res.data)
+      setCommentList(res.data)
+    }
+    getList()
+  }, [])
   // delete review
   const handleDel = (id) => {
     console.log(id)
@@ -86,6 +99,7 @@ const App = () => {
   }
 
   // get dom
+  const inputRef = useRef(null)
 
   const [content, setContent] = useState('')
   const handlePublish = () => {
@@ -105,6 +119,12 @@ const App = () => {
         }
       ]
     )
+    // clear input
+    setContent('')
+
+    // focus
+    inputRef.current.focus()
+
   }
   return (
     <div className="app">
@@ -139,6 +159,7 @@ const App = () => {
               className="reply-box-textarea"
               placeholder="Write a comment..."
               value = {content}
+              ref = {inputRef}
               onChange = {(e) => setContent(e.target.value)}
             />
             {/* submit button */}
